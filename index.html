@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palpites do Mundial</title>
+    <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="introOverlay">
+        <div id="introLoader">
+            <img src="/media/logo.png" alt="Carregando...">
+            <p id="loaderMessage"></p>
+        </div>
+        <video id="introVideo" preload="auto">
+            <source src="https://ipfs.io/ipfs/bafybeigtnrdeuiiyfnjkdsteaa76dyqxseylixtk5nztv6tbfkizchqhje" type="video/mp4">
+            Seu navegador não suporta o elemento de vídeo.
+        </video>
+        <button id="enterButton" style="display:none;">Entrar</button>
+    </div>
+
+    <div class="sound-control" id="soundControl">
+        <i class="fas fa-volume-up"></i>
+    </div>
+
+    <div class="sound-settings-modal" id="soundSettingsModal">
+        <div class="sound-setting-item">
+            <label for="volumeSlider">Volume:</label>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="sound-setting-item">
+            <label for="muteToggle">Mudo:</label>
+            <input type="checkbox" id="muteToggle">
+        </div>
+        <p>
+            <a href="https://youtu.be/p3l7fgvrEKM?si=3v3vvE3pRwDHwYee" target="_blank">Ouvir a Música no YouTube</a>
+        </p>
+    </div>
+
+    <header>
+        <div class="logo">
+            <i class="fas fa-trophy logo-icon"></i>
+            <h1>Palpites do Mundial</h1>
+        </div>
+        </header>
+
+    <main>
+        <section class="logo-section">
+            <div class="trophy-container">
+                <img src="/media/logo.png" alt="LogoMundial"> </div>
+            <h2>Mundial de Clubes FIFA</h2>
+            <p>Faça seu palpite sobre o time campeão do Mundial de Clubes FIFA e concorra a 300 MON!</p>
+        </section>
+
+        <section class="interaction-section">
+            <h2 class="section-title"><i class="fas fa-futbol"></i> Faça Seu Palpite Aqui!</h2>
+            
+            <div class="google-form-container">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdJ3P2ep_44D32FcyBf5umdlVSWNQXaKCgSxg5_RwDjnyFokg/viewform?embedded=true" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+            </div>
+
+            </section>
+
+        </main>
+
+    <footer>
+        <p>Desenvolvido por <a href="https://x.com/0xGustavo" target="_blank" class="devby">0xGus</a></p>
+    </footer>
+
+    <audio id="backgroundSound" loop>
+        <source src="/media/music.mp3" type="audio/mp3"> 
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
