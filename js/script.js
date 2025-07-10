@@ -3,14 +3,11 @@ const introVideo = document.getElementById('introVideo');
 const introLoader = document.getElementById('introLoader');
 const enterButton = document.getElementById('enterButton');
 const loaderMessage = document.getElementById('loaderMessage');
-
 const soundControl = document.getElementById('soundControl');
 const backgroundSound = document.getElementById('backgroundSound');
 const soundSettingsModal = document.getElementById('soundSettingsModal');
 const volumeSlider = document.getElementById('volumeSlider');
-const muteToggle = document.getElementById('muteToggle');
-
-let soundInitialized = false;
+const playPauseBtn = document.getElementById('playPauseBtn');
 
 window.addEventListener('load', () => {
     loadSoundPreferences();
@@ -61,12 +58,16 @@ function startMainApp() {
     }, 500);
 
     setupSoundEventListeners();
-    backgroundSound.play().catch(e => console.log("Autoplay de música bloqueado:", e));
+
+    const musicPausedPreviously = localStorage.getItem('musicPausedByUser');
+    if (musicPausedPreviously !== 'true') {
+        backgroundSound.play().catch(e => console.log("Autoplay de música bloqueado:", e));
+    }
+    updateUiBasedOnSoundState();
 }
 
 function loadSoundPreferences() {
     const savedVolume = localStorage.getItem('backgroundVolume');
-    const savedMute = localStorage.getItem('backgroundMute');
 
     if (savedVolume !== null) {
         backgroundSound.volume = parseFloat(savedVolume);
@@ -75,25 +76,18 @@ function loadSoundPreferences() {
         backgroundSound.volume = 0.2;
         volumeSlider.value = 0.2;
     }
-
-    if (savedMute === 'true') {
-        backgroundSound.muted = true;
-        muteToggle.checked = true;
-        soundControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
-    } else {
-        backgroundSound.muted = false;
-        muteToggle.checked = false;
-        soundControl.innerHTML = '<i class="fas fa-volume-up"></i>';
-    }
-    soundInitialized = true;
+    updateUiBasedOnSoundState();
 }
 
 function setupSoundEventListeners() {
     if (soundControl.getAttribute('data-listeners-set') === 'true') return;
 
     soundControl.addEventListener('click', toggleSoundSettings);
-    volumeSlider.addEventListener('input', updateVolume);
-    muteToggle.addEventListener('change', toggleMute);
+    volumeSlider.addEventListener('input', handleVolumeChange);
+    playPauseBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); 
+        togglePlayPause();
+    });
 
     document.addEventListener('click', (event) => {
         if (!soundSettingsModal.contains(event.target) && !soundControl.contains(event.target)) {
@@ -103,44 +97,44 @@ function setupSoundEventListeners() {
     soundControl.setAttribute('data-listeners-set', 'true');
 }
 
-
 function toggleSoundSettings() {
     soundSettingsModal.classList.toggle('active');
-    if (soundSettingsModal.classList.contains('active')) {
-        muteToggle.checked = backgroundSound.muted;
-    }
 }
 
-function updateVolume() {
-    backgroundSound.volume = volumeSlider.value;
-    localStorage.setItem('backgroundVolume', volumeSlider.value);
-    if (backgroundSound.muted && volumeSlider.value > 0) {
+function handleVolumeChange() {
+    const volume = volumeSlider.value;
+    backgroundSound.volume = volume;
+    localStorage.setItem('backgroundVolume', volume);
+
+    if (backgroundSound.muted && volume > 0) {
         backgroundSound.muted = false;
-        muteToggle.checked = false;
-        soundControl.innerHTML = '<i class="fas fa-volume-up"></i>';
-        localStorage.setItem('backgroundMute', 'false');
-    } else if (volumeSlider.value == 0 && !backgroundSound.muted) {
-        backgroundSound.muted = true;
-        muteToggle.checked = true;
-        soundControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        localStorage.setItem('backgroundMute', 'true');
     }
-    if (backgroundSound.volume > 0 && !backgroundSound.muted && backgroundSound.paused) {
-        backgroundSound.play().catch(e => console.log("Autoplay blocked on volume change:", e));
-    }
+    
+    updateUiBasedOnSoundState();
 }
 
-function toggleMute() {
-    backgroundSound.muted = muteToggle.checked;
-    soundControl.innerHTML = muteToggle.checked ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-    localStorage.setItem('backgroundMute', muteToggle.checked);
-    if (!backgroundSound.muted && backgroundSound.volume === 0) {
-         backgroundSound.volume = 0.1;
-         volumeSlider.value = 0.1;
-         localStorage.setItem('backgroundVolume', 0.1);
+function togglePlayPause() {
+    if (backgroundSound.paused) {
+        if (backgroundSound.volume == 0) {
+            backgroundSound.volume = 0.1;
+            volumeSlider.value = 0.1;
+            localStorage.setItem('backgroundVolume', '0.1');
+        }
+        backgroundSound.play().catch(e => console.log("Erro ao tentar tocar o som:", e));
+        localStorage.setItem('musicPausedByUser', 'false');
+    } else {
+        backgroundSound.pause();
+        localStorage.setItem('musicPausedByUser', 'true');
     }
-    if (!backgroundSound.paused && backgroundSound.muted) {
-    } else if (!backgroundSound.paused && !backgroundSound.muted && soundInitialized) {
-         backgroundSound.play().catch(e => console.log("Autoplay blocked on unmute:", e));
+    updateUiBasedOnSoundState();
+}
+
+function updateUiBasedOnSoundState() {
+    if (backgroundSound.paused || backgroundSound.muted || backgroundSound.volume === 0) {
+        playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i><p>Tocar Música</p>'
+        soundControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    } else {
+        playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i><p>Pausar Música</p>'
+        soundControl.innerHTML = '<i class="fas fa-volume-up"></i>';
     }
 }
