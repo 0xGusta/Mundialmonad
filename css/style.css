@@ -163,6 +163,23 @@ a {
     display: flex;
 }
 
+.modal-button {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.modal-button:hover {
+    background: linear-gradient(90deg, #530eaa 0%, #1a5ac3 100%);
+}
+
 .sound-setting-item {
     display: flex;
     align-items: center;
